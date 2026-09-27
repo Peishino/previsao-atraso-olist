@@ -216,3 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Dados do projeto (Olist - CC BY-NC-SA, não versionar)
+data/raw/*.csv
+data/processed/*.csv
