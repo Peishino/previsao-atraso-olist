@@ -220,3 +220,6 @@ __marimo__/
 # Dados do projeto (Olist - CC BY-NC-SA, não versionar)
 data/raw/*.csv
 data/processed/*.csv
+
+# for GitHub Copilot instructions
+.github/copilot-instructions.md
