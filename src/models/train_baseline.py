@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
 
@@ -28,6 +29,15 @@ CATEGORICAL_COLUMNS: tuple[str, ...] = (
     "estado_vendedor_mais_distante", "forma_pagamento", "dia_semana_compra",
     "mes_compra", "quinzena_compra",
 )
+
+
+@dataclass(frozen=True)
+class TrainingArtifacts:
+    """Artefatos do treino necessarios para analises posteriores."""
+
+    metrics: dict[str, dict[str, float | dict[str, float]]]
+    model: HistGradientBoostingClassifier
+    x_test: pd.DataFrame
 
 
 def temporal_split(
@@ -153,7 +163,8 @@ def print_evaluation(metrics: dict[str, dict[str, float | dict[str, float]]]) ->
 def run_training(
     raw_dir: str | Path,
     database_path: str | Path = ":memory:",
-) -> dict[str, dict[str, float | dict[str, float]]]:
+    return_artifacts: bool = False,
+) -> dict[str, dict[str, float | dict[str, float]]] | TrainingArtifacts:
     """Executa o pipeline completo e retorna metricas de validacao e teste."""
     data = load_features(raw_dir, database_path)
     train, validation, test = temporal_split(data)
@@ -166,6 +177,8 @@ def run_training(
         "test": evaluate_model(model, x_test, y_test),
     }
     print_evaluation(metrics)
+    if return_artifacts:
+        return TrainingArtifacts(metrics=metrics, model=model, x_test=x_test)
     return metrics
 
 
